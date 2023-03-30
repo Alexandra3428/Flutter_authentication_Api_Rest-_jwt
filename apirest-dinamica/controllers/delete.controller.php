@@ -1,51 +1,51 @@
-<?php 
+<?php
 
-require_once "models/delete.model.php";
+require_once("models/delete.model.php");
 
 class DeleteController{
+    
+        /*=============================================
+        Petición Delete para eliminar datos
+        =============================================*/
+    
+        static public function deleteData($table,  $id, $nameId){
 
-	/*=============================================
-	Peticion Delete para eliminar datos
-	=============================================*/
+            $response = DeleteModel::deleteData($table, $id, $nameId);
+            
+            $return = new DeleteController();
+            $return -> fncResponse($response);
+            
 
-	static public function deleteData($table, $id, $nameId){
+            
+        } 
+        
+        /*=============================================
+        Respuesta del controlador
+        =============================================*/
+         public function fncResponse($response){
 
-		$response = DeleteModel::deleteData($table, $id, $nameId);
-		
-		$return = new DeleteController();
-		$return -> fncResponse($response);
+        if(!empty($response)){
 
-	}
 
-	/*=============================================
-	Respuestas del controlador
-	=============================================*/
+            $json = array(
 
-	public function fncResponse($response){
+              'status' => 200,
+              'results' => $response,
+              
+            );
+        }else{
+                
+                $json = array(
+    
+                    'status' => 404,
+                    'results' => 'No hay resultados',
+                    'method' => 'delete'
+                );
+        }    
 
-		if(!empty($response)){
+        echo json_encode($json, http_response_code($json['status']));
 
-			$json = array(
-
-				'status' => 200,
-				'results' => $response
-
-			);
-
-		}else{
-
-			$json = array(
-
-				'status' => 404,
-				'results' => 'Not Found',
-				'method' => 'delete'
-
-			);
-
-		}
-
-		echo json_encode($json, http_response_code($json["status"]));
-
-	}
-
+    }
+        
+   
 }

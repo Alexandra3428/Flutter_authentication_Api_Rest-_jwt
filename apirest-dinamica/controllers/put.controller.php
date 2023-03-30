@@ -1,51 +1,51 @@
-<?php 
+<?php
 
-require_once "models/put.model.php";
+require_once("models/put.model.php");
 
 class PutController{
+    
+        /*=============================================
+        Petición PUT para editar datos
+        =============================================*/
+    
+        static public function putData($table, $data, $id, $nameId){
 
-	/*=============================================
-	Peticion Put para editar datos
-	=============================================*/
+            $response = PutModel::putData($table, $data, $id, $nameId);
+            
+            $return = new PutController();
+            $return -> fncResponse($response);
+            
 
-	static public function putData($table, $data, $id, $nameId){
+            
+        } 
+        
+        /*=============================================
+        Respuesta del controlador
+        =============================================*/
+         public function fncResponse($response){
 
-		$response = PutModel::putData($table, $data, $id, $nameId);
-		
-		$return = new PutController();
-		$return -> fncResponse($response);
+        if(!empty($response)){
 
-	}
 
-	/*=============================================
-	Respuestas del controlador
-	=============================================*/
+            $json = array(
 
-	public function fncResponse($response){
+              'status' => 200,
+              'results' => $response,
+              
+            );
+        }else{
+                
+                $json = array(
+    
+                    'status' => 404,
+                    'results' => 'No hay resultados',
+                    'method' => 'put'
+                );
+        }    
 
-		if(!empty($response)){
+        echo json_encode($json, http_response_code($json['status']));
 
-			$json = array(
-
-				'status' => 200,
-				'results' => $response
-
-			);
-
-		}else{
-
-			$json = array(
-
-				'status' => 404,
-				'results' => 'Not Found',
-				'method' => 'put'
-
-			);
-
-		}
-
-		echo json_encode($json, http_response_code($json["status"]));
-
-	}
-
+    }
+        
+   
 }

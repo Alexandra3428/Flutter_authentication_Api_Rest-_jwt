@@ -1,171 +1,111 @@
 <?php
+require_once('models/connection.php');
+require_once('controllers/post.controller.php');
 
-require_once "models/connection.php";
-require_once "controllers/post.controller.php";
+if (isset($_POST)){
 
-if(isset($_POST)){
+    /*================================================
+    Separar propiedades en un arreglo
+    =================================================*/
 
-	/*=============================================
-	Separar propiedades en un arreglo
-	=============================================*/
+    $columns = array();
 
-	$columns = array();
-	
-	foreach (array_keys($_POST) as $key => $value) {
+    foreach(array_keys($_POST) as $key => $value){
+        
+        array_push($columns, $value);
+       
+    }
 
-		array_push($columns, $value);
-			
-	}
+    /*================================================
+    validar la tabla y las columnas
+    =================================================*/
 
-	/*=============================================
-	Validar la tabla y las columnas
-	=============================================*/
+    if (empty(Connection::getColumnsData($table, $columns))){
 
-	if(empty(Connection::getColumnsData($table, $columns))){
+        $json = array(
+            "status" => 404,
+            "comment" => "La tabla o las columnas no existen"
+        );
 
-		$json = array(
-		 	'status' => 400,
-		 	'results' => "Error: Fields in the form do not match the database"
-		);
+        echo json_encode($json, http_response_code($json['status']));
 
-		echo json_encode($json, http_response_code($json["status"]));
+        return;
+        
+    }
 
-		return;
+    $response = new PostController();
 
-	}
+    /*================================================
+    Peticion Post para registrar usuario
+    =================================================*/
 
-	$response = new PostController();
+    if (isset($_GET['register']) && $_GET['register'] == 'true'){
 
-	/*=============================================
-	Peticion POST para registrar usuario
-	=============================================*/	
+        $suffix = $_GET['suffix'] ?? 'user';
 
-	if(isset($_GET["register"]) && $_GET["register"] == true){
+        $response -> postRegister($table, $_POST, $suffix);
 
-		$suffix = $_GET["suffix"] ?? "user";
+        /*================================================
+        Peticion Post para login de usuario
+        =================================================*/
 
-		$response -> postRegister($table,$_POST,$suffix);
+    }else if (isset($_GET['login']) && $_GET['login'] == 'true'){
 
-	/*=============================================
-	Peticion POST para login de usuario
-	=============================================*/	
+        $suffix = $_GET['suffix'] ?? 'user';
 
-	}else if(isset($_GET["login"]) && $_GET["login"] == true){
+        $response -> postLogin($table, $_POST, $suffix);
+            
+    }else{
 
-		$suffix = $_GET["suffix"] ?? "user";
+        if(isset($_GET['token'])){
 
-		$response -> postLogin($table,$_POST,$suffix);
+            /*================================================
+            Peticion Post para usuarios no autorizados
+            =================================================*/
 
-	}else{
+            if($_GET['token'] == 'no' && isset($_GET['except'])){
 
+                /*================================================
+                validar la tabla y las columnas
+                =================================================*/
 
-		if(isset($_GET["token"])){
+                $columns = array($_GET['except']);
 
-			/*=============================================
-			Peticion POST para usuarios no autorizados
-			=============================================*/
+                if (empty(Connection::getColumnsData($table, $columns))){
 
-			if($_GET["token"] == "no" && isset($_GET["except"])){
+                    $json = array(
+                        "status" => 404,
+                        "comment" => "La tabla o las columnas no existen"
+                    );
 
-				/*=============================================
-				Validar la tabla y las columnas
-				=============================================*/
+                    echo json_encode($json, http_response_code($json['status']));
 
-				$columns = array($_GET["except"]);
+                    return;
+                    
+                }
 
-				if(empty(Connection::getColumnsData($table, $columns))){
+                /*================================================
+                Soolicitar respuesta del controlador para crear datos en cualquier tabla
+                =================================================*/
 
-					$json = array(
-					 	'status' => 400,
-					 	'results' => "Error: Fields in the form do not match the database"
-					);
+                $response -> postData($table, $_POST);
 
-					echo json_encode($json, http_response_code($json["status"]));
+                /*================================================
+                Peticion Post para usuarios autorizados
+                =================================================*/
 
-					return;
+            }
+        }
+    }
 
-				}
-
-				/*=============================================
-				Solicitamos respuesta del controlador para crear datos en cualquier tabla
-				=============================================*/		
-
-				$response -> postData($table,$_POST);
-
-			/*=============================================
-			Peticion POST para usuarios autorizados
-			=============================================*/
-
-			}else{
-
-				$tableToken = $_GET["table"] ?? "users";
-				$suffix = $_GET["suffix"] ?? "user";
-
-				$validate = Connection::tokenValidate($_GET["token"],$tableToken,$suffix);
-
-				/*=============================================
-				Solicitamos respuesta del controlador para crear datos en cualquier tabla
-				=============================================*/		
-
-				if($validate == "ok"){
-		
-					$response -> postData($table,$_POST);
-
-				}
-
-				/*=============================================
-				Error cuando el token ha expirado
-				=============================================*/	
-
-				if($validate == "expired"){
-
-					$json = array(
-					 	'status' => 303,
-					 	'results' => "Error: The token has expired"
-					);
-
-					echo json_encode($json, http_response_code($json["status"]));
-
-					return;
-
-				}
-
-				/*=============================================
-				Error cuando el token no coincide en BD
-				=============================================*/	
-
-				if($validate == "no-auth"){
-
-					$json = array(
-					 	'status' => 400,
-					 	'results' => "Error: The user is not authorized"
-					);
-
-					echo json_encode($json, http_response_code($json["status"]));
-
-					return;
-
-				}
-
-			}
-
-		/*=============================================
-		Error cuando no envía token
-		=============================================*/	
-
-		}else{
-
-			$json = array(
-			 	'status' => 400,
-			 	'results' => "Error: Authorization required"
-			);
-
-			echo json_encode($json, http_response_code($json["status"]));
-
-			return;	
-
-		}	
-
-	}
 
 }
+
+
+
+   
+
+
+    
+
+

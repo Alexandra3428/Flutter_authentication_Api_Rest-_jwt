@@ -1,54 +1,37 @@
-<?php 
-
-require_once "connection.php";
-require_once "get.model.php";
-
+<?php
+require_once("models/connection.php");
+require_once("get.model.php");
 class DeleteModel{
 
-	/*=============================================
-	Peticion Delete para eliminar datos de forma dinámica
-	=============================================*/
+    /*=============================================
+    Petición delete para eliminar datos de forma dinamica
+    =============================================*/
 
-	static public function deleteData($table, $id, $nameId){
+    static public function deleteData($table, $id, $nameId){
+        echo '<pre>'; print_r($nameId); echo '</pre>';
+        echo '<pre>'; print_r($id); echo '</pre>';
+        echo '<pre>'; print_r($table); echo '</pre>';
 
-		/*=============================================
-		Validar el ID
-		=============================================*/
+        
+       
+        $sql = "UPDATE FROM $table WHERE $nameId = :$nameId";
 
-		$response = GetModel::getDataFilter($table, $nameId, $nameId, $id, null,null,null,null);
-		
-		if(empty($response)){
+        $link = Connection::connect();
+        $stmt = $link->prepare($sql);
 
-			return null;
+        $stmt -> bindParam(":".$nameId, $id, PDO::PARAM_STR);
 
-		}
+        if($stmt -> execute()){
+            $response = array(
+                "status" => "success",
+                "code" => 200,
+                "message" => "Datos actualizados correctamente"
+            );
 
-		/*=============================================
-		Eliminamos registros
-		=============================================*/
-
-		$sql = "DELETE FROM $table WHERE $nameId = :$nameId";
-
-		$link = Connection::connect();
-		$stmt = $link->prepare($sql);
-
-		$stmt->bindParam(":".$nameId, $id, PDO::PARAM_STR);
-
-		if($stmt -> execute()){
-
-			$response = array(
-
-				"comment" => "The process was successful"
-			);
-
-			return $response;
-		
-		}else{
-
-			return $link->errorInfo();
-
-		}
-
-	}
-
+              return $response;
+        }else{
+            return $link->errorInfo();
+        }      
+       
+    }
 }

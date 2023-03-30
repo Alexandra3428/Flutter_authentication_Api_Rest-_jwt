@@ -1,8 +1,6 @@
-<?php 
-
-require_once "connection.php";
-require_once "get.model.php";
-
+<?php
+require_once("models/connection.php");
+require_once("get.model.php");
 class PutModel{
 
 	/*=============================================
@@ -45,26 +43,19 @@ class PutModel{
 		foreach ($data as $key => $value) {
 
 			$stmt->bindParam(":".$key, $data[$key], PDO::PARAM_STR);
-		
-		}
+        }
+        $stmt -> bindParam(":".$nameId, $id, PDO::PARAM_STR);
 
-		$stmt->bindParam(":".$nameId, $id, PDO::PARAM_STR);
+        if($stmt -> execute()){
+            $response = array(
+                
+                "comment" => "Datos actualizados correctamente"
+            );
 
-		if($stmt -> execute()){
-
-			$response = array(
-
-				"comment" => "The process was successful"
-			);
-
-			return $response;
-		
-		}else{
-
-			return $link->errorInfo();
-
-		}
-
-	}
-
+              return $response;
+        }else{
+            return $link->errorInfo();
+        }      
+       
+    }
 }

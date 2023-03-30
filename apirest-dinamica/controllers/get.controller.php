@@ -1,36 +1,32 @@
 <?php
 
-require_once "models/get.model.php";
+require_once("models/get.model.php");
 
 class GetController{
 
-	/*=============================================
-	Peticiones GET sin filtro
-	=============================================*/
+     /*=============================================
+    Petición GET sin filtro
+    =============================================*/
+    static public function getData($table, $select, $orderBy, $orderMode, $startAt, $endAt){
 
-	static public function getData($table, $select,$orderBy,$orderMode,$startAt,$endAt){
+        $response = GetModel::getData($table, $select, $orderBy, $orderMode, $startAt, $endAt);
+        
+        $return = new GetController();
+        $return -> fncResponse($response);
+    }
 
-		$response = GetModel::getData($table, $select,$orderBy,$orderMode,$startAt,$endAt);
+     /*=============================================
+    Petición GET con filtro
+    =============================================*/
+    static public function getDataFilter($table, $select, $linkTo, $equaLTo, $orderBy, $orderMode, $startAt, $endAt){
 
-		$return = new GetController();
-		$return -> fncResponse($response);
+        $response = GetModel::getDataFilter($table, $select, $linkTo, $equaLTo, $orderBy, $orderMode, $startAt, $endAt);
 
-	}
+        $return = new GetController();
+        $return -> fncResponse($response);
+    }
 
-	/*=============================================
-	Peticiones GET con filtro
-	=============================================*/
-
-	static public function getDataFilter($table, $select, $linkTo, $equalTo,$orderBy,$orderMode,$startAt,$endAt){
-
-		$response = GetModel::getDataFilter($table, $select, $linkTo, $equalTo,$orderBy,$orderMode,$startAt,$endAt);
-
-		$return = new GetController();
-		$return -> fncResponse($response);
-
-	}
-
-	/*=============================================
+     /*=============================================
 	Peticiones GET sin filtro entre tablas relacionadas
 	=============================================*/
 
