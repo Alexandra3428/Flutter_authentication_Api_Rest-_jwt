@@ -1,4 +1,4 @@
-# flutter_crud
+# flutter_curl
 
 A new Flutter project.
 
