@@ -12,7 +12,7 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   GlobalKey<FormState> _formKey = GlobalKey();
-  String _email_instructor = '', _password_instructor = '';
+  String _email = '', _password = '';
   AuthenticationAPI _authenticationAPI = AuthenticationAPI();
 
   Future<void> _submit() async {
@@ -20,8 +20,8 @@ class _LoginFormState extends State<LoginForm> {
     print("form isOk $isOk");
     if (isOk) {
       final response = await _authenticationAPI.login(
-        email_instructor: _email_instructor,
-        password_instructor: _password_instructor,
+        email: _email,
+        password: _password,
       );
 
       Navigator.pushNamedAndRemoveUntil(
@@ -47,13 +47,13 @@ class _LoginFormState extends State<LoginForm> {
             children: <Widget>[
               InputText(
                 keyboardType: TextInputType.emailAddress,
-                label: "EMAIL ADDRESS",
+                label: "EMAIL",
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(30),
                 ),
                 onChanged: (String text) {
-                  _email_instructor = text;
+                  _email = text;
                 },
                 validator: (text) {
                   if (!text!.contains("@")) {
@@ -83,7 +83,7 @@ class _LoginFormState extends State<LoginForm> {
                           borderRadius: BorderRadius.circular(30),
                         ),
                         onChanged: (String text) {
-                          _password_instructor = text;
+                          _password = text;
                         },
                         validator: (text) {
                           if (text!.trim().length == 0) {

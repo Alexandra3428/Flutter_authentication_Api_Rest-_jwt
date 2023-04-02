@@ -12,9 +12,7 @@ class RegisterForm extends StatefulWidget {
 
 class _RegisterFormState extends State<RegisterForm> {
   GlobalKey<FormState> _formKey = GlobalKey();
-  String _username_instructor = '',
-      _email_instructor = '',
-      _password_instructor = '';
+  String _email = '', _password = '', _password_confirmation = '';
   final AuthenticationAPI _authenticationAPI = new AuthenticationAPI();
 
   Future<void> _submit() async {
@@ -23,9 +21,9 @@ class _RegisterFormState extends State<RegisterForm> {
     if (isOk) {
       ProgressDialog.show(context);
       await _authenticationAPI.register(
-        username_instructor: _username_instructor,
-        email_instructor: _email_instructor,
-        password_instructor: _password_instructor,
+        email: _email,
+        password: _password,
+        password_confirmation: _password_confirmation,
       );
       ProgressDialog.dissmiss(context);
     }
@@ -47,32 +45,13 @@ class _RegisterFormState extends State<RegisterForm> {
             children: <Widget>[
               InputText(
                 keyboardType: TextInputType.emailAddress,
-                label: "USERNAME",
+                label: "Email",
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(30),
                 ),
                 onChanged: (text) {
-                  _username_instructor = text;
-                },
-                validator: (text) {
-                  if (text!.trim().length < 5) {
-                    return "Invalid username";
-                  }
-                  return "Username is required";
-                },
-                key: Key('username'),
-              ),
-              SizedBox(height: responsive.dp(2)),
-              InputText(
-                keyboardType: TextInputType.emailAddress,
-                label: "EMAIL ADDRESS",
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                onChanged: (text) {
-                  _email_instructor = text;
+                  _email = text;
                 },
                 validator: (text) {
                   if (!text!.contains("@")) {
@@ -85,13 +64,13 @@ class _RegisterFormState extends State<RegisterForm> {
               SizedBox(height: responsive.dp(2)),
               InputText(
                 keyboardType: TextInputType.emailAddress,
-                label: "PASSWORD",
+                label: "Password",
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 19, 17, 17),
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(30),
                 ),
                 onChanged: (text) {
-                  _password_instructor = text;
+                  _password = text;
                 },
                 validator: (text) {
                   if (text!.trim().length < 6) {
@@ -100,6 +79,25 @@ class _RegisterFormState extends State<RegisterForm> {
                   return "Password is required";
                 },
                 key: Key('password'),
+              ),
+              SizedBox(height: responsive.dp(2)),
+              InputText(
+                keyboardType: TextInputType.emailAddress,
+                label: "Password confirmation",
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 19, 17, 17),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                onChanged: (text) {
+                  _password_confirmation = text;
+                },
+                validator: (text) {
+                  if (text!.trim().length < 6) {
+                    return "Confirm password";
+                  }
+                  return "Password is required confirmation";
+                },
+                key: Key('password_confirmation'),
               ),
               SizedBox(height: responsive.dp(5)),
               SizedBox(
