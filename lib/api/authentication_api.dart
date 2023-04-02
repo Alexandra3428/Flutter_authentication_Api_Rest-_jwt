@@ -8,9 +8,9 @@ class AuthenticationAPI {
   final Logger _logger = Logger();
 
   Future<void> register({
-    required String username_instructor,
-    required String email_instructor,
-    required String password_instructor,
+    required String email,
+    required String password,
+    required String password_confirmation,
   }) async {
     try {
       await Future.delayed(Duration(seconds: 2));
@@ -19,14 +19,12 @@ class AuthenticationAPI {
         'Authorization': 'c5LTA6WPbMwHhEabYu77nN9cn4VcMj',
         'Content-Type': 'application/x-www-form-urlencoded'
       };
-      var request = http.Request(
-          'POST',
-          Uri.parse(
-              'http://localhost:3000/instructors?register=true&suffix=instructor'));
+      var request = http.Request('GET',
+          Uri.parse('http://localhost:3000/api_rest_curl/register_curl.php'));
       request.bodyFields = {
-        'username_instructor': username_instructor,
-        'email_instructor': email_instructor,
-        'password_instructor': password_instructor,
+        'email': "",
+        'password': "",
+        'password_confirmation': "",
       };
       request.headers.addAll(headers);
 
@@ -44,20 +42,18 @@ class AuthenticationAPI {
   }
 
   Future<void> login({
-    required String email_instructor,
-    required String password_instructor,
+    required String email,
+    required String password,
   }) async {
     var headers = {
       'Authorization': 'c5LTA6WPbMwHhEabYu77nN9cn4VcMj',
       'Content-Type': 'application/x-www-form-urlencoded'
     };
     var request = http.Request(
-        'POST',
-        Uri.parse(
-            'http://localhost:3000/instructors?login=true&suffix=instructor'));
+        'GET', Uri.parse('http://localhost:3000/api_rest_curl/login_curl.php'));
     request.bodyFields = {
-      'email_instructor': '',
-      'password_instructor': '',
+      'email': 'developer@test.local',
+      'password': 'mC*f*IrvUW^RPJ8z',
     };
     request.headers.addAll(headers);
 
